@@ -3,6 +3,7 @@ from collections import Counter
 import time
 
 
+
 class DecisionNode:
     """Class to represent a single node in a decision tree."""
 
@@ -86,11 +87,20 @@ def build_decision_tree():
         The root node of the decision tree.
     """
 
-    decision_tree_root = None
-
-    # TODO: finish this.͏︆͏󠄃͏󠄌͏󠄍͏󠄂͏️͏󠄈͏︀͏︆
-    raise NotImplemented()
-
+    func0 = lambda feature: feature[0] == 0
+    decision_tree_root = DecisionNode(None, None, func0, None)
+    decision_tree_root.right = DecisionNode(None, None, None, 1)
+    func1 = lambda feature: feature[3] == 0
+    decision_tree_root.left = DecisionNode(None, None, func1, None)
+    func2 = lambda feature: feature[2] == 1
+    func3 = lambda feature: feature[1] == 1
+    decision_tree_root.left.right = DecisionNode(None, None, func3, None)
+    decision_tree_root.left.left = DecisionNode(None, None, func2, None)
+    decision_tree_root.left.right.left = DecisionNode(None, None,None, 0)
+    decision_tree_root.left.right.right = DecisionNode(None, None, None, 1)
+    decision_tree_root.left.left.right = DecisionNode(None, None, None, 1)
+    decision_tree_root.left.left.left = DecisionNode(None, None, None, 0)
+    
     return decision_tree_root
 
 
@@ -116,7 +126,16 @@ def confusion_matrix(classifier_output, true_labels):
     """
 
     # TODO: finish this.͏︆͏󠄃͏󠄌͏󠄍͏󠄂͏️͏󠄈͏︀͏︆
-    raise NotImplemented()
+    classifier_output = np.array(classifier_output)
+    true_labels = np.array(true_labels)
+    true_list = true_labels[classifier_output == true_labels]
+    false_list = true_labels[classifier_output != true_labels]
+    TruePos = np.sum(np.array(true_list) == 1).astype(float)
+    TrueNeg = np.sum(np.array(true_list) == 0).astype(float)
+    FalseNeg = np.sum(np.array(false_list) == 1).astype(float)
+    FalsePos = np.sum(np.array(false_list) == 0).astype(float)
+    confusion_matrix = np.array([[TruePos, FalseNeg], [FalsePos, TrueNeg]])
+    return confusion_matrix
 
 
 def precision(classifier_output, true_labels):
@@ -130,8 +149,15 @@ def precision(classifier_output, true_labels):
         The precision of the classifier output.
     """
 
-    # TODO: finish this.͏︆͏󠄃͏󠄌͏󠄍͏󠄂͏️͏󠄈͏︀͏︆
-    raise NotImplemented()
+    classifier_output = np.array(classifier_output)
+    true_labels = np.array(true_labels)
+    true_list = true_labels[classifier_output == true_labels]
+    false_list = true_labels[classifier_output != true_labels]
+    TruePos = np.sum(np.array(true_list) == 1).astype(float)
+    TrueNeg = np.sum(np.array(true_list) == 0).astype(float)
+    FalseNeg = np.sum(np.array(false_list) == 1).astype(float)
+    FalsePos = np.sum(np.array(false_list) == 0).astype(float)
+    return TruePos/(TruePos+FalsePos)
 
 
 def recall(classifier_output, true_labels):
@@ -145,9 +171,16 @@ def recall(classifier_output, true_labels):
         The recall of the classifier output.
     """
 
-    # TODO: finish this.͏︆͏󠄃͏󠄌͏󠄍͏󠄂͏️͏󠄈͏︀͏︆
-    raise NotImplemented()
-
+    classifier_output = np.array(classifier_output)
+    true_labels = np.array(true_labels)
+    true_list = true_labels[classifier_output == true_labels]
+    false_list = true_labels[classifier_output != true_labels]
+    TruePos = np.sum(np.array(true_list) == 1).astype(float)
+    TrueNeg = np.sum(np.array(true_list) == 0).astype(float)
+    FalseNeg = np.sum(np.array(false_list) == 1).astype(float)
+    FalsePos = np.sum(np.array(false_list) == 0).astype(float)
+    confusion_matrix = np.array([[TruePos, FalseNeg], [FalsePos, TrueNeg]])
+    return TruePos/(TruePos+FalseNeg)
 
 def accuracy(classifier_output, true_labels):
     """Get the accuracy of a classifier compared to the correct values.
@@ -160,8 +193,11 @@ def accuracy(classifier_output, true_labels):
         The accuracy of the classifier output.
     """
 
-    # TODO: finish this.͏︆͏󠄃͏󠄌͏󠄍͏󠄂͏️͏󠄈͏︀͏︆
-    raise NotImplemented()
+    classifier_output = np.array(classifier_output)
+    true_labels = np.array(true_labels)
+    correct_classifications = np.sum(np.array(classifier_output) == np.array(true_labels))
+    accuracy = correct_classifications/len(true_labels)
+    return accuracy
 
 
 def gini_impurity(class_vector):
@@ -177,7 +213,16 @@ def gini_impurity(class_vector):
     Returns:
         Floating point number representing the gini impurity.
     """
-    raise NotImplemented()
+    classes = np.array(class_vector)
+    if len(class_vector) > 0:
+        p_0 = np.mean(classes.astype(float) == 0)
+        p_1 = np.mean(classes.astype(float) == 1)
+        gini = 1.0 - p_0**2 - p_1**2 + 1e-8
+    else:
+        gini = 0.0
+    return gini
+
+
 
 
 def gini_gain(previous_classes, current_classes):
@@ -189,7 +234,15 @@ def gini_gain(previous_classes, current_classes):
     Returns:
         Floating point number representing the information gain.
     """
-    raise NotImplemented()
+    
+    giniprevious= gini_impurity(previous_classes)
+    bob = len(current_classes)
+    joe = len(previous_classes)
+    gini = giniprevious
+    for i in range(bob):
+        gini = gini - gini_impurity(current_classes[i]) * len(current_classes[i])/joe
+
+    return float(gini)
 
 
 class DecisionTree:
@@ -214,6 +267,7 @@ class DecisionTree:
 
         self.root = self.__build_tree__(features, classes)
 
+
     def __build_tree__(self, features, classes, depth=0):
         """Build tree that automatically finds the decision functions.
         Args:
@@ -224,8 +278,73 @@ class DecisionTree:
             Root node of decision tree.
         """
 
-        # TODO: finish this.͏︆͏󠄃͏󠄌͏󠄍͏󠄂͏️͏󠄈͏︀͏︆
-        raise NotImplemented()
+        if features.shape[0] <= 1:
+            return DecisionNode(None, None, None, classes[0])
+        
+        if(len(set(classes)) == 1):
+            return DecisionNode(None, None, None, classes[0])
+
+        if depth >= self.depth_limit:
+            count_class_0, count_class_1 = np.bincount(classes)
+            if count_class_1 > count_class_0:   
+                return DecisionNode(None, None, None, 1)
+            else:
+                return DecisionNode(None, None, None, 0)
+        
+        bestfeat = None
+        bestgini = 0.0
+        threshold = None
+        finalsplit = None
+            
+
+            
+        for i in range(features.shape[1]):
+            step = (max(features[:, i]) - min(features[:, i]))/400.0
+            finalsplit = []
+            thresholdfinal = float('-inf')
+            bestginigain = float('-inf')
+            for j in np.arange(min(features[:, i]) + step, max(features[:, i]), step):
+                currthreshold = j
+                splitdis = np.zeros(len(classes))
+                for a in range(len(classes)):
+                    if features[a, i] > currthreshold:
+                        splitdis[a] = 1
+                    else:
+                        splitdis[a] = 0
+        
+                gini = gini_gain(classes, [classes[np.where(splitdis == 0)],
+                                                   classes[np.where(splitdis == 1)]])
+                if gini > bestginigain:
+                    bestginigain = gini
+                    thresholdfinal = currthreshold
+                    finalsplit = splitdis
+            if bestgini < bestginigain:
+                bestgini = bestginigain
+                bestfeat = i
+                threshold = thresholdfinal
+                finalsplit = finalsplit
+            
+                
+        if bestgini == 0.0:
+            return DecisionNode(None, None, None, classes[0])
+        
+        
+        cvleft = classes[features[:, bestfeat] <= threshold]
+        leftfeature = features[features[:, bestfeat] <= threshold]
+        cvright = classes[features[:, bestfeat] > threshold]
+        rightfeature = features[features[:, bestfeat] > threshold]
+        
+        func = lambda features: features[bestfeat] <= threshold
+        
+        currnode = DecisionNode(None, None, func, None)
+        currnode.left = self.__build_tree__(leftfeature, cvleft, depth = depth + 1)
+        currnode.right = self.__build_tree__(rightfeature, cvright, depth = depth + 1)
+        
+        return currnode
+
+
+
+
 
     def classify(self, features):
         """Use the fitted tree to classify a list of example features.
@@ -235,11 +354,8 @@ class DecisionTree:
             A list of class labels.
         """
 
-        class_labels = []
-
-        # TODO: finish this.͏︆͏󠄃͏󠄌͏󠄍͏󠄂͏️͏󠄈͏︀͏︆
-        raise NotImplemented()
-        return class_labels
+        predicted_labels = [self.root.decide(features[i]) for i in range(features.shape[0])]
+        return predicted_labels
 
 
 class RandomForest:
@@ -260,24 +376,47 @@ class RandomForest:
         self.depth_limit = depth_limit
         self.example_subsample_rate = example_subsample_rate
         self.attr_subsample_rate = attr_subsample_rate
+        self.feature_list = []
 
     def fit(self, features, classes):
         """Build a random forest of decision trees using Bootstrap Aggregation.
             features (m x n): m examples with n features.
             classes (m x 1): Array of Classes.
         """
+        num_samples = len(classes)
+        num_subsamples = int(self.example_subsample_rate * num_samples)
+        num_feat = len(features[0])
+        num_features = int(self.attr_subsample_rate * num_feat)
+        for i in range(self.num_trees):
+            subfeatindex= np.random.choice(num_samples, num_subsamples, replace = True).reshape(-1, 1)
+            subsamp = np.squeeze(features[subfeatindex])
+            subfeatsubidx = np.random.choice(num_feat, num_features, replace = False)
+            self.feature_list.append(subfeatsubidx)
+            subsampfeats = subsamp[:, subfeatsubidx]
+            subsampfeats_classes = classes[subfeatindex].astype(int)
+            tree = DecisionTree(self.depth_limit)
+            tree.fit(subsampfeats, np.squeeze(subsampfeats_classes))
+            self.trees.append(tree)
 
-        # TODO: finish this.͏︆͏󠄃͏󠄌͏󠄍͏󠄂͏️͏󠄈͏︀͏︆
-        raise NotImplemented()
 
     def classify(self, features):
         """Classify a list of features based on the trained random forest.
         Args:
             features (m x n): m examples with n features.
         """
+  
+        class_label = []
+        for i in range(self.num_trees):
+            tree = self.trees[i]
+            class_labels = np.array(tree.classify(features[:, self.feature_list[i]])).reshape(-1, 1)
+            class_label.append(class_labels)
+            
+        class_label = np.column_stack(class_label)
+        majority_vote= np.mean(class_label, axis=1)
+        featurelist = (majority_vote > 0.5).reshape(-1, 1)
 
-        # TODO: finish this.͏︆͏󠄃͏󠄌͏󠄍͏󠄂͏️͏󠄈͏︀͏︆
-        raise NotImplemented()
+        return featurelist
+
 
 
 class Vectorization:
@@ -313,8 +452,8 @@ class Vectorization:
             Numpy array of data.
         """
 
-        # TODO: finish this.͏︆͏󠄃͏󠄌͏󠄍͏󠄂͏️͏󠄈͏︀͏︆
-        raise NotImplemented()
+        vectorized = np.multiply(data,data) + data
+        return vectorized
 
     def non_vectorized_slice(self, data):
         """Find row with max sum using loops.
@@ -349,8 +488,10 @@ class Vectorization:
             Tuple (Max row sum, index of row with max sum)
         """
 
-        # TODO: finish this.͏︆͏󠄃͏󠄌͏󠄍͏󠄂͏️͏󠄈͏︀͏︆
-        raise NotImplemented()
+        sum = np.sum(data, axis = 1)[:100]
+        max = np.max(sum)
+        maxindex = np.argmax(sum)
+        return max, maxindex
 
     def non_vectorized_flatten(self, data):
         """Display occurrences of positive numbers using loops.
@@ -385,8 +526,10 @@ class Vectorization:
             List of occurrences [(integer, number of occurrences), ...]
         """
 
-        # TODO: finish this.͏︆͏󠄃͏󠄌͏󠄍͏󠄂͏️͏󠄈͏︀͏︆
-        raise NotImplemented()
+        flatten = np.hstack(data)
+        uniquenumber, count = np.unique(flatten, return_counts = True)
+        uniquedict = [(uniquenumber[i], count[i]) for i in range(len(uniquenumber)) if uniquenumber[i] > 0 ]
+        return uniquedict
     
     
     def non_vectorized_glue(self, data, vector, dimension='c'):
@@ -427,8 +570,11 @@ class Vectorization:
             Numpy array of data.
             
         """
-        # TODO: finish this.͏︆͏󠄃͏󠄌͏󠄍͏󠄂͏️͏󠄈͏︀͏︆
-        raise NotImplemented()
+        if dimension == 'c':
+            vectorized = np.column_stack((data, vector))
+        else:
+            vectorized = np.row_stack((data,vector))
+        return vectorized
 
     def non_vectorized_mask(self, data, threshold):
         """Element wise array evaluation with loops.
@@ -463,10 +609,10 @@ class Vectorization:
         Returns:
             Numpy array of data.
         """
-        # TODO: finish this.͏︆͏󠄃͏󠄌͏󠄍͏󠄂͏️͏󠄈͏︀͏︆
-        raise NotImplemented()
+        vectorized = np.where((data < threshold), data * data, data)
+        return vectorized
 
 def return_your_name():
     # return your name͏︆͏󠄃͏󠄌͏󠄍͏󠄂͏️͏󠄈͏︀͏︆
     # TODO: finish this͏︆͏󠄃͏󠄌͏󠄍͏󠄂͏️͏󠄈͏︀͏︆
-    raise NotImplemented()
+    return("Eric Chang")
